@@ -8,5 +8,5 @@
     "dry-run": "DRY_RUN=true node src/index.js",
     "test": "node --test"
   },
-  "engines": { "node": ">=22" }
+  "engines": { "node": ">=24" }
 }

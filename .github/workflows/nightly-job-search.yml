@@ -24,11 +24,10 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: '22'
-          cache: npm
-      - run: npm install --ignore-scripts
+          node-version: '24'
+          package-manager-cache: false
       - name: Run job search
         run: npm start
         env:
@@ -39,4 +38,3 @@ jobs:
           SF_LOGIN_URL: ${{ vars.SF_LOGIN_URL }}
           SUMMARY_EMAIL: ${{ vars.SUMMARY_EMAIL }}
           DRY_RUN: ${{ inputs.dry_run || 'false' }}
-
