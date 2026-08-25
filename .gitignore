@@ -1,0 +1,8 @@
+.env
+.env.local
+node_modules/
+.sf/
+.sfdx/
+resumes/*.pdf
+resumes/*.txt
+!resumes/README.md

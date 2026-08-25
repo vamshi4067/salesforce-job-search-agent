@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <classAccesses><apexClass>JobSearchSummaryService</apexClass><enabled>true</enabled></classAccesses>
+    <description>Least-privilege access for the nightly job search integration.</description>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Company__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Job_Title__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Location__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Remote_Type__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Posting_URL__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Posting_Key__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Source__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Posted_Date__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Salary__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Description__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Match_Score__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Match_Summary__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Matched_Skills__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Missing_Skills__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Resume_Type__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Status__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Verified_Open__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Last_Verified__c</field><readable>true</readable></fieldPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Job Search Agent Integration</label>
+    <objectPermissions><allowCreate>true</allowCreate><allowDelete>false</allowDelete><allowEdit>true</allowEdit><allowRead>true</allowRead><modifyAllRecords>false</modifyAllRecords><object>Job_Application__c</object><viewAllRecords>true</viewAllRecords></objectPermissions>
+    <tabSettings><tab>Job_Application__c</tab><visibility>Visible</visibility></tabSettings>
+</PermissionSet>

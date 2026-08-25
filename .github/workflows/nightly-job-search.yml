@@ -1,0 +1,42 @@
+name: Nightly Salesforce job search
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Search and score without Salesforce writes
+        type: boolean
+        default: true
+  schedule:
+    - cron: '30 5 * * 1-5'
+      timezone: America/New_York
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-job-search
+  cancel-in-progress: false
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm install --ignore-scripts
+      - name: Run job search
+        run: npm start
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL }}
+          SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
+          SF_CLIENT_SECRET: ${{ secrets.SF_CLIENT_SECRET }}
+          SF_LOGIN_URL: ${{ vars.SF_LOGIN_URL }}
+          SUMMARY_EMAIL: ${{ vars.SUMMARY_EMAIL }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+

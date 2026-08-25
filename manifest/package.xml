@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types><members>Job_Search_Tracker</members><name>CustomApplication</name></types>
+    <types><members>JobSearchSummaryService</members><members>JobSearchSummaryServiceTest</members><name>ApexClass</name></types>
+    <types><members>Job_Application__c</members><name>CustomObject</name></types>
+    <types><members>Job_Search_Agent_Admin</members><members>Job_Search_Agent_Integration</members><name>PermissionSet</name></types>
+    <types><members>Job_Application__c</members><name>CustomTab</name></types>
+    <version>65.0</version>
+</Package>

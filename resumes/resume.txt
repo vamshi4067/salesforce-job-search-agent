@@ -1,0 +1,229 @@
+Vamshidhar G
+Salesforce Consultant
+Contact: (571) 662-5196
+Email: gvamshi1017@gmail.com
+
+PROFESSIONAL SUMMARY:
+Senior Salesforce Developer with 8+ years of experience delivering enterprise Salesforce solutions across
+Sales Cloud, Service Cloud, Experience Cloud, CPQ, and Data Cloud. Experienced in designing and
+developing scalable applications using Apex, Lightning Web Components (LWC), Salesforce Flow, and
+REST/SOAP integrations. Strong background in application architecture, system integrations, security,
+DevOps, and production support. Experienced working directly with business stakeholders, solution
+architects, QA teams, and product owners to deliver solutions that improve business processes while
+following Salesforce best practices. Experienced in leading technical design discussions, mentoring
+developers, implementing CI/CD practices and collaborating with cross-functional teams throughout the
+software development lifecycle.
+
+TECHNICAL SKILLS:
+
+Development
+
+Salesforce Clouds
+
+Apex, Apex Classes, Apex Triggers, Lightning Web Components (LWC),
+Aura Components, Visualforce, SOQL, SOSL, Dynamic SOQL, Batch
+Apex, Queueable Apex, Future Methods, Scheduled Apex, Platform
+Events, Change Data Capture, Custom Metadata Types, Custom
+Settings
+Sales Cloud, Service Cloud, Experience Cloud, CPQ, Revenue Cloud,
+Data Cloud, Field Service
+
+Integrations
+
+REST APIs, SOAP APIs, Bulk API, Composite API, Named Credentials,
+OAuth, MuleSoft, Salesforce Connect, Platform Events, Azure Data
+Factory
+
+Web Technologies
+
+HTML, XML, JavaScript, CSS, J2EE
+
+➢
+
+DevOps & Tools
+➢
+➢ Databases
+
+Automation
+
+Gearset, Copado, Flosum, Salesforce DX, CI/CD, Azure DevOps, Jira,
+Git, GitHub, VS Code, Data Loader, Workbench, Salesforce Inspector,
+Postman
+Oracle, MySQL, Teradata, MS Access, DynamoDB, AWS RDS
+Record-Triggered Flow, Screen Flow, Auto-launched Flow, Scheduled
+Flow, Approval Processes, Validation Rules, Assignment Rules,
+Escalation Rules
+
+➢ AI
+
+Agentforce, Prompt Builder, Einstein for Developers, Einstein Copilot
+
+➢ Languages
+
+SQL, R, Python, Apex
+
+SALESFORCE CERTIFICATIONS:
+•
+
+Salesforce Certified Administrator
+
+•
+
+Salesforce Certified Platform App
+Builder
+
+•
+
+Salesforce Certified Agentforce
+Specialist
+
+•
+
+Salesforce Certified Platform Developer
+I
+
+•
+
+Salesforce Certified Business
+Analyst
+
+•
+
+Agentblazer – Innovator
+
+PROFESSIONAL EXPERIENCE:
+Ernst & Young – Mclean, VA
+Role: Salesforce Consultant
+
+Sep 2022 – Present
+
+Responsibilities:
+• Led the technical design and implementation of custom Sales Cloud solutions using Apex, Lightning
+Web Components (LWC), and Salesforce Flow to streamline opportunity management, proposal
+generation, marketing budgeting, and customer lifecycle processes.
+• Designed and developed a custom Marketing Budget Management application using Lightning Web
+Components (LWC), Apex, Screen Flows, and Record-Triggered Flows that enabled marketing teams to
+create campaign budgets, distribute monthly revenue, manage billing schedules, track budget
+utilization, and automate budget approvals from a centralized workspace.
+• Developed a custom Opportunity Management framework supporting Linear, Digital, and Marketing
+opportunity processes, allowing business users to create related opportunities, manage proposal
+workflows, automate record relationships, and synchronize opportunity status and revenue
+information using Apex trigger frameworks.
+• Built Screen Flows, configurable validation frameworks, Custom Metadata Types, Validation Rules, and
+custom approval logic to automate opportunity creation, proposal generation, budget setup, funding
+validations, billing rules, Digital Proposal requirements, and Marketing opportunity approvals.
+• Developed REST-based integrations between Salesforce, Airtable, and Appian using REST APIs, Named
+Credentials, OAuth, and reusable Apex integration services to synchronize marketing project data,
+campaign budgets, operational reporting, and downstream business processes.
+• Developed Apex-based migration utilities and validation scripts supporting the migration of Accounts,
+Contacts, Opportunities, Campaigns, Campaign Members, Products, Contracts, and CPQ records from
+multiple legacy Salesforce organizations into a consolidated enterprise environment.
+• Automated document generation, approval notifications, and downstream business processes using
+Salesforce Flow, Apex, Platform Events, Email Services, and Conga Composer while supporting
+enterprise deployments and production releases.
+• Supported source-driven development and enterprise releases using Git, Gearset, Salesforce DX
+(SFDX), and Agile Scrum, while conducting code reviews, mentoring developers, troubleshooting
+production issues, and driving Salesforce platform modernization through Flow migration and reusable
+Apex architecture.
+
+Enovational – Washington D.C
+Role: Salesforce Consultant
+
+Sep 2021 – Sep 2022
+
+Responsibilities:
+• Led the design and development of Apex services, Lightning Web Components (LWC), and Salesforce
+automation supporting case intake, contact investigations, exposure tracking, quarantine monitoring,
+and public health reporting.
+• Designed reusable Apex frameworks and trigger handler patterns to support high-volume case
+processing while maintaining scalability, code quality, and governor limit compliance.
+• Integrated the SmartyStreets API using REST services and Named Credentials to validate and
+standardize addresses for Contact and Intake records, significantly improving data accuracy for contact
+tracing operations.
+• Designed and developed Lightning Web Components (LWC) for vaccination scheduling, appointment
+management, provider workflows, and real-time vaccination status tracking, improving usability for
+healthcare providers and administrative staff.
+• Built Apex services, asynchronous processing, and Salesforce Flows to automate eligibility validation,
+appointment confirmation, vaccine inventory updates, and notification workflows across multiple
+vaccination sites.
+• Implemented Conga Composer solutions to automatically generate vaccination records, consent
+forms, provider agreements, operational reports, and regulatory documentation, eliminating manual
+document preparation.
+• Designed REST-based integrations between Salesforce and external healthcare systems to synchronize
+patient, provider, appointment and operational data while implementing centralized logging,
+exception handling, and retry mechanisms for reliable transaction processing.
+
+Client: Caterpillar – Champaign, IL
+Role: Salesforce Developer
+
+Apr 2020 – Sep 2021
+
+Responsibilities:
+• Implementing Salesforce Sales Cloud for a nationwide sales organization by customizing Lead, Account,
+Contact, Opportunity, Product, Quote, and Campaign management processes.
+• Developed custom Lead Management, Opportunity Management, and Account Planning functionality
+using Apex, Visualforce, Lightning Components and declarative Salesforce features.
+• Developed REST API integrations between Salesforce and external customer management systems to
+synchronize account, contact, and order information.
+• Built configurable approval processes for discounts and high-value opportunities, allowing sales
+managers to approve deals based on region, product line and revenue thresholds.
+• Built reusable Apex integration services and error-handling frameworks to improve monitoring,
+logging, and recovery for failed API transactions.
+• Implemented Batch Apex, Queueable Apex, and Scheduled Apex processes to handle high-volume
+equipment, warranty, dealer and customer records while maintaining bulk-processing and governorlimit best practices.
+• Automated customer onboarding by implementing Screen Flows, validation rules, email alerts, and
+custom notifications, reducing manual processing and improving data consistency.
+• Developed Batch Apex and scheduled jobs to process large data volumes received from external
+systems while maintaining governor limit compliance.
+• Worked closely with integration teams to troubleshoot API failures, data synchronization issues, and
+authentication challenges using Named Credentials and OAuth.
+
+Client: Avant- Chicago, IL
+Role: Salesforce Developer
+
+Mar 2019 – Apr 2020
+
+Responsibilities:
+• Customized Sales Cloud applications for lead management, account management, opportunity
+tracking, and customer service operations using Apex and declarative Salesforce configuration.
+• Developed Apex classes, Apex triggers, and Visualforce pages to support automated lead assignment,
+opportunity approvals, and customer onboarding workflows.
+• Assisted in enhancing Service Cloud by configuring Case Management, Email-to-Case, queues,
+assignment rules, and dashboards that helped support teams manage customer requests more
+efficiently.
+• Assisted in developing REST-based integrations between Salesforce and internal business applications
+to synchronize customer information and reduce manual data entry.
+• Resolved production defects related to Apex, Visualforce, validation rules, and workflow automation
+while collaborating with QA teams and business users to ensure successful releases.
+• Participated in Agile development activities including sprint planning, backlog refinement, code
+reviews, system testing, User Acceptance Testing (UAT), and production deployments.
+• Enhanced Salesforce security by configuring Profiles, Permission Sets, Sharing Rules, Record Types, and
+Organization-Wide Defaults (OWD) based on business and compliance requirements.
+
+Client: UBER – India
+Role: Salesforce Developer
+
+May 2016 – Jun 2018
+
+Responsibilities:
+• Developed Salesforce applications for Uber India’s driver onboarding, document verification, vehicle
+registration, partner activation, and support operations using Apex, Visualforce, SOQL, and JavaScript.
+• Automated onboarding and approval processes using Apex triggers, Workflow Rules, Process Builder,
+validation rules, approval processes, and email notifications.
+• Integrated Salesforce with internal driver and trip-management systems using REST and SOAP APIs to
+synchronize partner profiles, vehicles, onboarding statuses, and operational data.
+• Customized Service Cloud to manage driver and rider support cases involving account activation,
+payments, trip disputes, and document verification.
+• Configured case queues, assignment rules, escalation rules, and email-to-case to route support
+requests based on issue type, location, and priority.
+• Developed Batch and Scheduled Apex jobs to process high-volume partner records and identify
+incomplete applications and expired compliance documents.
+• Created reports and dashboards to track driver activation rates, onboarding progress, document
+verification, case volumes, and resolution times across Indian cities.
+• Wrote Apex test classes covering positive, negative, and bulk-processing scenarios and maintained the
+code coverage required for production deployments.
+• Built reports and dashboards to track driver application volume, onboarding completion, activation
+rates, pending document reviews, support-case volume, and case-resolution times across Indian cities.
+• Collaborated with Uber India’s operations, driver-support, product, QA, and integration teams to
+translate onboarding and support requirements into Salesforce solutions.
+
