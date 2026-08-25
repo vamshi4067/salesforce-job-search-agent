@@ -1,7 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { loadConfig } from './config.js';
-import { discoverJobs, scoreJob, tailorResume } from './openrouter.js';
+import { normalizeJobs, scoreJob, tailorResume } from './gemini.js';
 import { authenticate, attachFile, attachText, sendSummary, upsertJob } from './salesforce.js';
+import { searchJobs } from './tavily.js';
 import { externalId, verifyJob } from './verify.js';
 
 async function loadResume() {
@@ -13,10 +14,20 @@ function isoDateOrNull(value) {
   return Number.isNaN(Date.parse(`${value}T00:00:00Z`)) ? null : value;
 }
 
+function sanitizeResume(text) {
+  return text
+    .split('\n')
+    .filter((line) => !/^\s*(?:contact|phone|email|address)\s*:/i.test(line))
+    .join('\n')
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[email removed]')
+    .replace(/(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/g, '[phone removed]');
+}
+
 async function main() {
   const config = loadConfig();
   const masterResume = await loadResume();
-  const candidates = await discoverJobs(config);
+  const safeResumeText = sanitizeResume(masterResume.text);
+  const candidates = await normalizeJobs(config, await searchJobs(config));
   const verified = [];
   for (const candidate of candidates) {
     const check = await verifyJob(candidate);
@@ -25,7 +36,7 @@ async function main() {
   const ranked = [];
   for (const job of verified) {
     const initialKind = /developer|apex|lwc/i.test(`${job.title} ${job.description}`) ? 'Developer' : 'Admin';
-    const evaluation = await scoreJob(config, job, masterResume.text);
+    const evaluation = await scoreJob(config, job, safeResumeText);
     evaluation.resumeType = initialKind;
     ranked.push({ ...job, evaluation, selected: masterResume });
   }
@@ -49,7 +60,7 @@ async function main() {
       }
     });
     await attachFile(auth, recordId, job.selected.pdf, 'Master Resume');
-    if (index === 0) await attachText(auth, recordId, await tailorResume(config, job, job.selected.text), `Tailored Resume - ${job.company}`);
+    if (index === 0) await attachText(auth, recordId, await tailorResume(config, job, safeResumeText), `Tailored Resume - ${job.company}`);
   }
   await sendSummary(auth, { email: config.summaryEmail, jobs: picks.map((j) => ({ title: j.title, company: j.company, score: j.evaluation.score, url: j.url })) });
 }

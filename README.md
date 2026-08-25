@@ -1,6 +1,6 @@
 # Salesforce Job Search Agent
 
-Nightly cloud automation for Salesforce Admin/Developer job searches. OpenRouter searches and evaluates current postings, GitHub Actions runs the process, and Salesforce remains the system of record.
+Nightly cloud automation for Salesforce Admin/Developer job searches. Tavily finds current postings, Gemini Flash evaluates them, GitHub Actions runs the process, and Salesforce remains the system of record.
 
 ## What it does
 
@@ -17,8 +17,9 @@ Nightly cloud automation for Salesforce Admin/Developer job searches. OpenRouter
 
 ```mermaid
 flowchart TD
-  GH["GitHub Actions nightly"] --> OR["OpenRouter search + scoring"]
-  OR --> V["URL and location verification"]
+  GH["GitHub Actions nightly"] --> T["Tavily job search"]
+  T --> G["Gemini Flash normalization + scoring"]
+  G --> V["URL and location verification"]
   V --> SF["Salesforce Job Tracker"]
   SF --> F["Salesforce Files"]
   SF --> E["Morning email"]
@@ -29,7 +30,7 @@ flowchart TD
 - A Salesforce org with My Domain enabled.
 - Salesforce CLI (`sf`) for the one-time metadata deployment.
 - A private GitHub repository.
-- An OpenRouter API key with enough credits for nightly model and web-search usage.
+- A Google AI Studio Gemini API key and a Tavily API key.
 - Your factual master resume in PDF and text format.
 
 ## 1. Deploy Salesforce metadata
@@ -71,14 +72,15 @@ Repository → Settings → Secrets and variables → Actions.
 
 Secrets:
 
-- `OPENROUTER_API_KEY`
+- `GEMINI_API_KEY`
+- `TAVILY_API_KEY`
 - `SF_CLIENT_ID`
 - `SF_CLIENT_SECRET`
 
 Variables:
 
 - `SF_LOGIN_URL` — normally `https://your-domain.my.salesforce.com`
-- `OPENROUTER_MODEL` — example: `anthropic/claude-sonnet-4.6`
+- `GEMINI_MODEL` — use `gemini-3.6-flash`
 - `SUMMARY_EMAIL` — fallback email if Salesforce setting is blank
 
 The workflow runs at 5:30 AM America/New_York on weekdays and can also be started manually. Change the schedule in `.github/workflows/nightly-job-search.yml` if desired.
@@ -90,6 +92,8 @@ Run the workflow manually with `dry_run=true`. It searches, verifies, and scores
 ## Security and operating notes
 
 - Keep the repository private because it contains your resumes.
+- Gemini receives a text version of the resume with common email and phone patterns removed. Tavily never receives the resume.
+- The free tiers have quotas and rate limits. This workflow uses three basic Tavily searches per run and limits Gemini output sizes.
 - Use an API-only integration user with only the supplied permission set.
 - URLs are canonicalized and hashed, preventing duplicates across runs.
 - AI output is treated as untrusted input and validated before Salesforce writes.
@@ -101,6 +105,6 @@ Run the workflow manually with `dry_run=true`. It searches, verifies, and scores
 ```bash
 npm install
 npm test
-OPENROUTER_API_KEY=... SF_CLIENT_ID=... SF_CLIENT_SECRET=... \
+GEMINI_API_KEY=... TAVILY_API_KEY=... SF_CLIENT_ID=... SF_CLIENT_SECRET=... \
 SF_LOGIN_URL=https://your-domain.my.salesforce.com npm run dry-run
 ```
