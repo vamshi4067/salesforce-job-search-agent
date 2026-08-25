@@ -10,7 +10,7 @@ async function generate(config, prompt, schema, maxOutputTokens) {
         temperature: 0,
         maxOutputTokens,
         ...(schema ? {
-          responseFormat: { text: { mimeType: 'application/json', schema } }
+          responseFormat: { text: { mimeType: 'APPLICATION_JSON', schema } }
         } : {})
       }
     })
