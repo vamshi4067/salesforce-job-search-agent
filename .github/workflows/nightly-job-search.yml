@@ -38,4 +38,6 @@ jobs:
           SF_CLIENT_SECRET: ${{ secrets.SF_CLIENT_SECRET }}
           SF_LOGIN_URL: ${{ vars.SF_LOGIN_URL }}
           SUMMARY_EMAIL: ${{ vars.SUMMARY_EMAIL }}
+          MINIMUM_SCORE: ${{ vars.MINIMUM_SCORE }}
+          MAXIMUM_JOBS: ${{ vars.MAXIMUM_JOBS }}
           DRY_RUN: ${{ inputs.dry_run || 'false' }}
