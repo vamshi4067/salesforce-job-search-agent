@@ -6,7 +6,7 @@ on:
       dry_run:
         description: Search and score without Salesforce writes
         type: boolean
-        default: true
+        default: false
   schedule:
     - cron: '30 5 * * 1-5'
       timezone: America/New_York
