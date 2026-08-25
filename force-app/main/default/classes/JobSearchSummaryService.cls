@@ -12,11 +12,12 @@ global with sharing class JobSearchSummaryService {
     }
 
     @HttpPost
-    global static Map<String, Object> sendSummary() {
+    global static void sendSummary() {
         SummaryRequest requestBody = (SummaryRequest) JSON.deserialize(RestContext.request.requestBody.toString(), SummaryRequest.class);
         if (requestBody == null || String.isBlank(requestBody.email)) {
             RestContext.response.statusCode = 400;
-            return new Map<String, Object>{ 'sent' => false, 'message' => 'Summary email is required.' };
+            writeResponse(new Map<String, Object>{ 'sent' => false, 'message' => 'Summary email is required.' });
+            return;
         }
         List<JobItem> jobs = requestBody.jobs == null ? new List<JobItem>() : requestBody.jobs;
         String html = '<h2>Salesforce job search summary</h2><p>' + jobs.size() + ' verified matches were added or refreshed.</p><ol>';
@@ -31,7 +32,12 @@ global with sharing class JobSearchSummaryService {
         message.setHtmlBody(html);
         Messaging.SendEmailResult[] results = Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ message });
         Boolean sent = !results.isEmpty() && results[0].isSuccess();
-        return new Map<String, Object>{ 'sent' => sent, 'count' => jobs.size() };
+        writeResponse(new Map<String, Object>{ 'sent' => sent, 'count' => jobs.size() });
+    }
+
+    private static void writeResponse(Map<String, Object> payload) {
+        RestContext.response.addHeader('Content-Type', 'application/json');
+        RestContext.response.responseBody = Blob.valueOf(JSON.serialize(payload));
     }
 
     private static String esc(String value) {

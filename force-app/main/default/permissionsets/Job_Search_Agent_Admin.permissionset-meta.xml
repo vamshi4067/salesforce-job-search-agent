@@ -2,12 +2,9 @@
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <classAccesses><apexClass>JobSearchSummaryService</apexClass><enabled>true</enabled></classAccesses>
     <description>Full management access to the personal Job Search Tracker.</description>
-    <fieldPermissions><editable>true</editable><field>Job_Application__c.Company__c</field><readable>true</readable></fieldPermissions>
-    <fieldPermissions><editable>true</editable><field>Job_Application__c.Job_Title__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Location__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Remote_Type__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Posting_URL__c</field><readable>true</readable></fieldPermissions>
-    <fieldPermissions><editable>true</editable><field>Job_Application__c.Posting_Key__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Source__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Posted_Date__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Salary__c</field><readable>true</readable></fieldPermissions>

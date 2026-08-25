@@ -8,10 +8,11 @@ private class JobSearchSummaryServiceTest {
         RestContext.request = request;
         RestContext.response = new RestResponse();
         Test.startTest();
-        Map<String, Object> result = JobSearchSummaryService.sendSummary();
+        JobSearchSummaryService.sendSummary();
         Test.stopTest();
+        Map<String, Object> result = (Map<String, Object>) JSON.deserializeUntyped(RestContext.response.responseBody.toString());
         System.assertEquals(true, result.get('sent'));
-        System.assertEquals(1, result.get('count'));
+        System.assertEquals(1, Integer.valueOf(String.valueOf(result.get('count'))));
     }
 
     @IsTest static void rejectsMissingEmail() {
@@ -19,7 +20,8 @@ private class JobSearchSummaryServiceTest {
         request.requestBody = Blob.valueOf('{"jobs":[]}');
         RestContext.request = request;
         RestContext.response = new RestResponse();
-        Map<String, Object> result = JobSearchSummaryService.sendSummary();
+        JobSearchSummaryService.sendSummary();
+        Map<String, Object> result = (Map<String, Object>) JSON.deserializeUntyped(RestContext.response.responseBody.toString());
         System.assertEquals(false, result.get('sent'));
         System.assertEquals(400, RestContext.response.statusCode);
     }
