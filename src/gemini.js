@@ -1,16 +1,19 @@
 const API_ROOT = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 async function generate(config, prompt, schema, maxOutputTokens) {
+  const effectivePrompt = schema
+    ? `${prompt}\n\nReturn only JSON matching this schema exactly:\n${JSON.stringify(schema)}`
+    : prompt;
   const response = await fetch(`${API_ROOT}/${encodeURIComponent(config.geminiModel)}:generateContent`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-goog-api-key': config.geminiKey },
     body: JSON.stringify({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      contents: [{ role: 'user', parts: [{ text: effectivePrompt }] }],
       generationConfig: {
         temperature: 0,
         maxOutputTokens,
         ...(schema ? {
-          responseFormat: { text: { mimeType: 'APPLICATION_JSON', schema } }
+          responseFormat: { text: { mimeType: 'APPLICATION_JSON' } }
         } : {})
       }
     })
