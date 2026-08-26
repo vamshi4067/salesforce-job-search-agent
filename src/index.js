@@ -27,21 +27,64 @@ async function main() {
   const config = loadConfig();
   const masterResume = await loadResume();
   const safeResumeText = sanitizeResume(masterResume.text);
-  const candidates = await normalizeJobs(config, await searchJobs(config));
+  const searchResults = await searchJobs(config);
+  console.log(`Tavily results: ${searchResults.length}`);
+  const candidates = config.bypassJobFilters
+    ? searchResults.slice(0, config.maximumJobs).map((result) => {
+        let source = 'Tavily';
+        try { source = new URL(result.url).hostname.replace(/^www\./, ''); } catch { /* rejected below */ }
+        const titleParts = (result.title || 'Salesforce Job').split(/\s+[|–—-]\s+/);
+        return {
+          title: (result.title || 'Salesforce Job').slice(0, 255),
+          company: (titleParts.at(-1) || source).slice(0, 255),
+          location: 'Unverified search result',
+          remoteType: 'Unverified',
+          url: result.url,
+          postedDate: null,
+          salary: null,
+          description: result.content || result.title || '',
+          source
+        };
+      })
+    : await normalizeJobs(config, searchResults);
+  console.log(`Gemini candidates: ${candidates.length}`);
   const verified = [];
+  const rejected = {};
   for (const candidate of candidates) {
+    if (config.bypassJobFilters) {
+      try {
+        verified.push({ ...candidate, url: new URL(candidate.url).toString() });
+      } catch {
+        rejected['invalid-url'] = (rejected['invalid-url'] || 0) + 1;
+      }
+      continue;
+    }
     const check = await verifyJob(candidate);
     if (check.ok) verified.push({ ...candidate, url: check.canonicalUrl });
+    else rejected[check.reason] = (rejected[check.reason] || 0) + 1;
   }
+  console.log(`Verified postings: ${verified.length}`);
+  if (Object.keys(rejected).length) console.log(`Rejected postings: ${JSON.stringify(rejected)}`);
   const ranked = [];
   for (const job of verified) {
     const initialKind = /developer|apex|lwc/i.test(`${job.title} ${job.description}`) ? 'Developer' : 'Admin';
-    const evaluation = await scoreJob(config, job, safeResumeText);
+    const evaluation = config.bypassJobFilters
+      ? {
+          score: 0,
+          summary: 'Diagnostic record created with filters and AI scoring bypassed.',
+          matchedSkills: [],
+          missingSkills: [],
+          resumeType: initialKind
+        }
+      : await scoreJob(config, job, safeResumeText);
     evaluation.resumeType = initialKind;
     ranked.push({ ...job, evaluation, selected: masterResume });
   }
   ranked.sort((a, b) => b.evaluation.score - a.evaluation.score);
-  const picks = ranked.filter((job) => job.evaluation.score >= config.minimumScore).slice(0, config.maximumJobs);
+  const picks = ranked
+    .filter((job) => config.bypassJobFilters || job.evaluation.score >= config.minimumScore)
+    .slice(0, config.maximumJobs);
+  console.log(`Selected postings: ${picks.length} (${config.bypassJobFilters ? 'filters bypassed' : `minimum score ${config.minimumScore}`})`);
   console.log(JSON.stringify(picks.map(({ title, company, url, evaluation }) => ({ title, company, url, score: evaluation.score })), null, 2));
   if (config.dryRun || !picks.length) return;
 
@@ -60,7 +103,9 @@ async function main() {
       }
     });
     await attachFile(auth, recordId, job.selected.pdf, 'Master Resume');
-    if (index === 0) await attachText(auth, recordId, await tailorResume(config, job, safeResumeText), `Tailored Resume - ${job.company}`);
+    if (index === 0 && !config.bypassJobFilters) {
+      await attachText(auth, recordId, await tailorResume(config, job, safeResumeText), `Tailored Resume - ${job.company}`);
+    }
   }
   await sendSummary(auth, { email: config.summaryEmail, jobs: picks.map((j) => ({ title: j.title, company: j.company, score: j.evaluation.score, url: j.url })) });
 }
