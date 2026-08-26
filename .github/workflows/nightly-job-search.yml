@@ -6,7 +6,7 @@ on:
       dry_run:
         description: Search and score without Salesforce writes
         type: boolean
-        default: false
+        default: true
   schedule:
     - cron: '30 5 * * 1-5'
       timezone: America/New_York
@@ -40,4 +40,5 @@ jobs:
           SUMMARY_EMAIL: ${{ vars.SUMMARY_EMAIL }}
           MINIMUM_SCORE: ${{ vars.MINIMUM_SCORE }}
           MAXIMUM_JOBS: ${{ vars.MAXIMUM_JOBS }}
+          BYPASS_JOB_FILTERS: ${{ vars.BYPASS_JOB_FILTERS }}
           DRY_RUN: ${{ inputs.dry_run || 'false' }}
