@@ -31,7 +31,6 @@ jobs:
       - name: Run job search
         run: npm start
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
