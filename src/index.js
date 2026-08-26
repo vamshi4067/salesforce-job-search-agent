@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { loadConfig } from './config.js';
-import { normalizeJobs, scoreJob, tailorResume } from './gemini.js';
+import { normalizeJobs, scoreJob, tailorResume } from './nvidia.js';
 import { authenticate, attachFile, attachText, sendSummary, upsertJob } from './salesforce.js';
 import { searchJobs } from './tavily.js';
 import { externalId, verifyJob } from './verify.js';
@@ -29,7 +29,8 @@ async function main() {
   const safeResumeText = sanitizeResume(masterResume.text);
   const searchResults = await searchJobs(config);
   console.log(`Tavily results: ${searchResults.length}`);
-  const candidates = config.bypassJobFilters
+  const diagnosticBypass = config.bypassJobFilters;
+  const candidates = diagnosticBypass
     ? searchResults.slice(0, config.maximumJobs).map((result) => {
         let source = 'Tavily';
         try { source = new URL(result.url).hostname.replace(/^www\./, ''); } catch { /* rejected below */ }
@@ -47,11 +48,11 @@ async function main() {
         };
       })
     : await normalizeJobs(config, searchResults);
-  console.log(`Gemini candidates: ${candidates.length}`);
+  console.log(`AI candidates: ${candidates.length}`);
   const verified = [];
   const rejected = {};
   for (const candidate of candidates) {
-    if (config.bypassJobFilters) {
+    if (diagnosticBypass) {
       try {
         verified.push({ ...candidate, url: new URL(candidate.url).toString() });
       } catch {
@@ -68,7 +69,7 @@ async function main() {
   const ranked = [];
   for (const job of verified) {
     const initialKind = /developer|apex|lwc/i.test(`${job.title} ${job.description}`) ? 'Developer' : 'Admin';
-    const evaluation = config.bypassJobFilters
+    const evaluation = diagnosticBypass
       ? {
           score: 0,
           summary: 'Diagnostic record created with filters and AI scoring bypassed.',
@@ -82,9 +83,9 @@ async function main() {
   }
   ranked.sort((a, b) => b.evaluation.score - a.evaluation.score);
   const picks = ranked
-    .filter((job) => config.bypassJobFilters || job.evaluation.score >= config.minimumScore)
+    .filter((job) => diagnosticBypass || job.evaluation.score >= config.minimumScore)
     .slice(0, config.maximumJobs);
-  console.log(`Selected postings: ${picks.length} (${config.bypassJobFilters ? 'filters bypassed' : `minimum score ${config.minimumScore}`})`);
+  console.log(`Selected postings: ${picks.length} (${diagnosticBypass ? 'filters bypassed' : `minimum score ${config.minimumScore}`})`);
   console.log(JSON.stringify(picks.map(({ title, company, url, evaluation }) => ({ title, company, url, score: evaluation.score })), null, 2));
   if (config.dryRun || !picks.length) return;
 
@@ -103,7 +104,7 @@ async function main() {
       }
     });
     await attachFile(auth, recordId, job.selected.pdf, 'Master Resume');
-    if (index === 0 && !config.bypassJobFilters) {
+    if (index === 0 && !diagnosticBypass) {
       await attachText(auth, recordId, await tailorResume(config, job, safeResumeText), `Tailored Resume - ${job.company}`);
     }
   }
