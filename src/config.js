@@ -6,8 +6,7 @@ export function loadConfig(env = process.env) {
   return {
     nvidiaKey: env.NVIDIA_API_KEY,
     tavilyKey: env.TAVILY_API_KEY,
-    nvidiaModel: env.NVIDIA_MODEL || 'meta/llama-3.3-70b-instruct',
-    sfClientId: env.SF_CLIENT_ID,
+    nvidiaModel: env.NVIDIA_MODEL || 'nvidia/llama-3.3-nemotron-super-49b-v1.5',    sfClientId: env.SF_CLIENT_ID,
     sfClientSecret: env.SF_CLIENT_SECRET,
     sfLoginUrl: env.SF_LOGIN_URL?.replace(/\/$/, ''),
     summaryEmail: env.SUMMARY_EMAIL || '',
