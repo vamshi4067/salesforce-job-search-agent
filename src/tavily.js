@@ -23,9 +23,9 @@ async function search(config, query) {
 export async function searchJobs(config) {
   const year = new Date().getUTCFullYear();
   const queries = [
-    `direct employer careers Salesforce Administrator remote United States apply ${year}`,
-    `direct employer careers Salesforce Developer remote United States apply ${year}`,
-    `direct employer Salesforce Administrator Developer careers Washington DC Northern Virginia Maryland Atlanta Georgia apply ${year}`
+    `direct employer careers Salesforce Administrator United States remote hybrid onsite apply ${year}`,
+    `direct employer careers Salesforce Developer United States remote hybrid onsite apply ${year}`,
+    `site:myworkdayjobs.com OR site:greenhouse.io OR site:lever.co OR site:ashbyhq.com Salesforce Administrator Developer United States ${year}`
   ];
   return (await Promise.all(queries.map((query) => search(config, query)))).flat();
 }

@@ -39,7 +39,7 @@ async function main() {
   const rejected = {};
   for (const candidate of uniqueCandidates) {
     const check = await verifyJob(candidate, undefined, config.postedWithinDays);
-    if (check.ok) verified.push({ ...candidate, url: check.canonicalUrl, postedDate: check.postedDate });
+    if (check.ok) verified.push({ ...candidate, url: check.canonicalUrl, postedDate: check.postedDate, sponsorship: check.sponsorship });
     else rejected[check.reason] = (rejected[check.reason] || 0) + 1;
   }
   console.log(`Verified postings: ${verified.length}`);
@@ -77,7 +77,7 @@ async function main() {
       fields: {
         Name: `${job.title} - ${job.company}`.slice(0, 80), Company__c: job.company, Job_Title__c: job.title,
         Location__c: job.location, Remote_Type__c: job.remoteType, Posting_URL__c: job.url,
-        Source__c: job.source, Posted_Date__c: isoDateOrNull(job.postedDate),
+        Source__c: job.source, Posted_Date__c: isoDateOrNull(job.postedDate), Sponsorship__c: job.sponsorship || 'Unknown',
         Salary__c: job.salary || '', Description__c: (job.description || '').slice(0, 32000),
         Match_Score__c: job.evaluation.score, Match_Summary__c: job.evaluation.summary,
         Matched_Skills__c: job.evaluation.matchedSkills.join('; '), Missing_Skills__c: job.evaluation.missingSkills.join('; '),

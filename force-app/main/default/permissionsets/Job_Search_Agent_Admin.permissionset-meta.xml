@@ -9,6 +9,7 @@
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Remote_Type__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Posting_URL__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Source__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Job_Application__c.Sponsorship__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Posted_Date__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Salary__c</field><readable>true</readable></fieldPermissions>
     <fieldPermissions><editable>true</editable><field>Job_Application__c.Description__c</field><readable>true</readable></fieldPermissions>

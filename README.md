@@ -5,9 +5,10 @@ Nightly cloud automation for Salesforce Admin/Developer job searches. Tavily fin
 ## What it does
 
 - Searches for Salesforce Administrator, Senior Salesforce Administrator, Salesforce Developer, and Senior Salesforce Developer openings.
-- Keeps only nationwide remote-US, DC/DMV, or Atlanta-metro roles.
+- Includes remote, hybrid, and onsite roles anywhere in the United States and rejects international or ambiguous locations; location remains available as a Salesforce reporting and list-view filter.
 - checks posting URLs and rejects pages that appear closed, expired, or unavailable.
 - scores each job against your supplied resume without inventing experience.
+- classifies explicit sponsorship language as Available, Not Available, or Unknown and stores it for Salesforce filtering.
 - upserts the best jobs into `Job_Application__c` by canonical URL hash.
 - attaches the same master resume, `resumes/resume.pdf`, to every record.
 - creates and attaches a truthful tailored Markdown resume for the strongest match.
@@ -115,6 +116,7 @@ Run the workflow manually with `dry_run=true`. It searches, verifies, and scores
 - URLs are canonicalized and hashed, preventing duplicates across runs.
 - Existing application statuses are preserved during nightly refreshes, and resume files are not attached twice.
 - General job collections and aggregator pages are rejected; only individual employer or ATS postings are eligible.
+- LinkedIn is not scraped or accessed by automation. LinkedIn blocks unauthorized automated access, so the search favors the corresponding employer or ATS application page when the same opening is advertised there.
 - Only active postings dated within the configured three-day window are eligible.
 - Salesforce stores verified active jobs posted within the last three days.
 - Morning summaries contain only newly created records whose posting date is today; older and refreshed records are not repeated.

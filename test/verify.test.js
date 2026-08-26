@@ -1,25 +1,42 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { canonicalizeUrl, externalId, extractPostedDate, isAllowedLocation, isDirectPostingUrl, isRecentPostedDate, verifyJob } from '../src/verify.js';
+import { canonicalizeUrl, classifySponsorship, externalId, extractPostedDate, isDirectPostingUrl, isRecentPostedDate, isUnitedStatesLocation, verifyJob } from '../src/verify.js';
 
 test('canonicalizes tracking URLs consistently', () => {
   assert.equal(canonicalizeUrl('https://EXAMPLE.com/job/1/?utm_source=x#apply'), 'https://example.com/job/1');
   assert.equal(externalId('https://example.com/job/1?source=x'), externalId('https://example.com/job/1'));
 });
 
-test('rejects non-target locations before fetching', async () => {
-  const result = await verifyJob({ title: 'Salesforce Developer', location: 'London', url: 'https://example.com' }, () => { throw new Error('should not fetch'); });
-  assert.equal(result.ok, false);
-  assert.equal(result.reason, 'location');
+test('does not reject a posting because of its city or work arrangement', async () => {
+  const result = await verifyJob(
+    { title: 'Salesforce Developer', location: 'Denver, CO', remoteType: 'Onsite', url: 'https://example.com/job/123', postedDate: '2026-08-26' },
+    async () => ({ ok: true, status: 200, url: 'https://example.com/job/123', text: async () => '<html>Apply now</html>' }),
+    3
+  );
+  assert.equal(result.ok, true);
 });
 
-test('accepts selected search regions', () => {
-  assert.equal(isAllowedLocation({ location: 'Remote', remoteType: 'Remote' }), true);
-  assert.equal(isAllowedLocation({ location: 'Remote - United States' }), true);
-  assert.equal(isAllowedLocation({ location: 'McLean, VA', remoteType: 'Hybrid' }), true);
-  assert.equal(isAllowedLocation({ location: 'Bethesda, MD', remoteType: 'Onsite' }), true);
-  assert.equal(isAllowedLocation({ location: 'Atlanta, GA', remoteType: 'Hybrid' }), true);
-  assert.equal(isAllowedLocation({ location: 'Denver, CO', remoteType: 'Hybrid' }), false);
+test('keeps only United States locations', () => {
+  assert.equal(isUnitedStatesLocation({ location: 'Denver, CO', remoteType: 'Onsite' }), true);
+  assert.equal(isUnitedStatesLocation({ location: 'New York, New York', remoteType: 'Hybrid' }), true);
+  assert.equal(isUnitedStatesLocation({ location: 'Remote - United States', remoteType: 'Remote' }), true);
+  assert.equal(isUnitedStatesLocation({ location: 'London, United Kingdom', remoteType: 'Hybrid' }), false);
+  assert.equal(isUnitedStatesLocation({ location: 'Remote', remoteType: 'Remote' }), false);
+});
+
+test('rejects a non-US posting before fetching', async () => {
+  const result = await verifyJob(
+    { title: 'Salesforce Developer', location: 'London, United Kingdom', remoteType: 'Hybrid', url: 'https://example.com/job/456' },
+    () => { throw new Error('should not fetch'); }
+  );
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, 'non-us-location');
+});
+
+test('classifies explicit sponsorship language conservatively', () => {
+  assert.equal(classifySponsorship('We are unable to provide visa sponsorship for this role.'), 'Not Available');
+  assert.equal(classifySponsorship('H-1B visa sponsorship is available.'), 'Available');
+  assert.equal(classifySponsorship('Equal opportunity employer.'), 'Unknown');
 });
 
 test('accepts direct ATS links and rejects collection pages', () => {

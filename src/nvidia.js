@@ -67,14 +67,15 @@ const jobSchema = {
     properties: {
       title: { type: 'string' }, company: { type: 'string' }, location: { type: 'string' },
       remoteType: { type: 'string' }, url: { type: 'string' }, postedDate: { type: ['string', 'null'] },
-      salary: { type: ['string', 'null'] }, description: { type: 'string' }, source: { type: 'string' }
+      salary: { type: ['string', 'null'] }, description: { type: 'string' }, source: { type: 'string' },
+      sponsorship: { type: 'string' }
     },
-    required: ['title', 'company', 'location', 'remoteType', 'url', 'postedDate', 'salary', 'description', 'source']
+    required: ['title', 'company', 'location', 'remoteType', 'url', 'postedDate', 'salary', 'description', 'source', 'sponsorship']
   }
 };
 
 export async function normalizeJobs(config, searchResults) {
-  return generate(config, `Today is ${new Date().toISOString().slice(0, 10)}. Convert these search results into up to 10 unique Salesforce Administrator or Salesforce Developer job postings. Keep nationwide US remote roles, DC/DMV roles, and Atlanta metro roles. A result must link to one specific job that a candidate can apply to. Reject job-search pages, category pages, talent networks, staffing lists, and pages containing multiple jobs. Prefer employer career sites and ATS pages such as Workday, Greenhouse, Lever, Ashby, SmartRecruiters, and iCIMS. Never assign multiple companies to one URL. Do not invent facts; use an empty string or null when unknown. Keep descriptions concise.\n\nSEARCH RESULTS\n${JSON.stringify(searchResults).slice(0, 40000)}`, jobSchema, 12000);
+  return generate(config, `Today is ${new Date().toISOString().slice(0, 10)}. Convert these search results into up to 10 unique Salesforce Administrator or Salesforce Developer job postings located anywhere in the United States. Include remote, hybrid, and onsite arrangements without preferring or rejecting any US city or state. Reject international jobs and ambiguous locations that cannot be confirmed as United States. A result must link to one specific job that a candidate can apply to. Reject job-search pages, category pages, talent networks, staffing lists, and pages containing multiple jobs. Prefer employer career sites and ATS pages such as Workday, Greenhouse, Lever, Ashby, SmartRecruiters, and iCIMS. Never assign multiple companies to one URL. Set sponsorship to exactly Available, Not Available, or Unknown based only on explicit posting text; do not infer it from the company. Do not invent facts; use an empty string or null when unknown. Keep descriptions concise.\n\nSEARCH RESULTS\n${JSON.stringify(searchResults).slice(0, 40000)}`, jobSchema, 12000);
 }
 
 const scoreSchema = {
