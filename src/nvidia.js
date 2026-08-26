@@ -30,11 +30,13 @@ async function request(config, prompt, maxTokens) {
     body: JSON.stringify({
       model: config.nvidiaModel,
       messages: [
-        { role: 'system', content: 'Follow the requested output format exactly. Do not include analysis, Markdown fences, or commentary.' },
+        { role: 'system', content: '/no_think\nFollow the requested output format exactly. Do not include analysis, Markdown fences, or commentary.' },
         { role: 'user', content: prompt }
       ],
       temperature: 0.1,
       top_p: 0.7,
+      chat_template_kwargs: { enable_thinking: false },
+      reasoning_budget: 0,
       max_tokens: maxTokens,
       stream: false
     })
@@ -43,7 +45,6 @@ async function request(config, prompt, maxTokens) {
   const data = await response.json();
   const text = data?.choices?.[0]?.message?.content;
   if (!text) throw new Error('NVIDIA NIM returned no text content');
-  if (data?.choices?.[0]?.finish_reason === 'length') throw new Error('NVIDIA NIM output was truncated.');
   return text;
 }
 
@@ -73,7 +74,7 @@ const jobSchema = {
 };
 
 export async function normalizeJobs(config, searchResults) {
-  return generate(config, `Today is ${new Date().toISOString().slice(0, 10)}. Convert these search results into up to 10 unique Salesforce Administrator or Salesforce Developer job postings. Keep nationwide US remote roles, DC/DMV roles, and Atlanta metro roles. Preserve direct posting URLs. Do not invent facts; use an empty string or null when unknown.\n\nSEARCH RESULTS\n${JSON.stringify(searchResults).slice(0, 50000)}`, jobSchema, 4000);
+  return generate(config, `Today is ${new Date().toISOString().slice(0, 10)}. Convert these search results into up to 10 unique Salesforce Administrator or Salesforce Developer job postings. Keep nationwide US remote roles, DC/DMV roles, and Atlanta metro roles. Preserve direct posting URLs. Do not invent facts; use an empty string or null when unknown. Keep descriptions concise.\n\nSEARCH RESULTS\n${JSON.stringify(searchResults).slice(0, 40000)}`, jobSchema, 12000);
 }
 
 const scoreSchema = {
@@ -88,11 +89,11 @@ const scoreSchema = {
 };
 
 export async function scoreJob(config, job, resumeText) {
-  const result = await generate(config, `Score this job against only facts in the resume. Never invent experience, certifications, metrics, employers, dates, or skills. Score from 0 to 100. resumeType must be Admin or Developer.\n\nJOB\n${JSON.stringify(job)}\n\nRESUME\n${resumeText.slice(0, 30000)}`, scoreSchema, 1000);
+  const result = await generate(config, `Score this job against only facts in the resume. Never invent experience, certifications, metrics, employers, dates, or skills. Score from 0 to 100. resumeType must be Admin or Developer.\n\nJOB\n${JSON.stringify(job)}\n\nRESUME\n${resumeText.slice(0, 30000)}`, scoreSchema, 2500);
   result.score = Math.max(0, Math.min(100, Number(result.score) || 0));
   return result;
 }
 
 export async function tailorResume(config, job, resumeText) {
-  return generate(config, `Rewrite the resume for this job. Preserve every fact and do not invent skills, employers, dates, certifications, metrics, education, or scope. Return clean Markdown only.\n\nJOB\n${JSON.stringify(job)}\n\nSOURCE RESUME\n${resumeText.slice(0, 30000)}`, null, 2500);
+  return generate(config, `Rewrite the resume for this job. Preserve every fact and do not invent skills, employers, dates, certifications, metrics, education, or scope. Return clean Markdown only.\n\nJOB\n${JSON.stringify(job)}\n\nSOURCE RESUME\n${resumeText.slice(0, 30000)}`, null, 5000);
 }
