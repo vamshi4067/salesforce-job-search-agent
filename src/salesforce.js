@@ -3,7 +3,10 @@ import { readFile } from 'node:fs/promises';
 export async function authenticate(config) {
   const body = new URLSearchParams({ grant_type: 'client_credentials', client_id: config.sfClientId, client_secret: config.sfClientSecret });
   const response = await fetch(`${config.sfLoginUrl}/services/oauth2/token`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
-  if (!response.ok) throw new Error(`Salesforce authentication failed (${response.status})`);
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`Salesforce authentication failed (${response.status}): ${details}`);
+  }
   return response.json();
 }
 
