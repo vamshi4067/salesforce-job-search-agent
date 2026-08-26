@@ -74,7 +74,7 @@ const jobSchema = {
 };
 
 export async function normalizeJobs(config, searchResults) {
-  return generate(config, `Today is ${new Date().toISOString().slice(0, 10)}. Convert these search results into up to 10 unique Salesforce Administrator or Salesforce Developer job postings. Keep nationwide US remote roles, DC/DMV roles, and Atlanta metro roles. Preserve direct posting URLs. Do not invent facts; use an empty string or null when unknown. Keep descriptions concise.\n\nSEARCH RESULTS\n${JSON.stringify(searchResults).slice(0, 40000)}`, jobSchema, 12000);
+  return generate(config, `Today is ${new Date().toISOString().slice(0, 10)}. Convert these search results into up to 10 unique Salesforce Administrator or Salesforce Developer job postings. Keep nationwide US remote roles, DC/DMV roles, and Atlanta metro roles. A result must link to one specific job that a candidate can apply to. Reject job-search pages, category pages, talent networks, staffing lists, and pages containing multiple jobs. Prefer employer career sites and ATS pages such as Workday, Greenhouse, Lever, Ashby, SmartRecruiters, and iCIMS. Never assign multiple companies to one URL. Do not invent facts; use an empty string or null when unknown. Keep descriptions concise.\n\nSEARCH RESULTS\n${JSON.stringify(searchResults).slice(0, 40000)}`, jobSchema, 12000);
 }
 
 const scoreSchema = {

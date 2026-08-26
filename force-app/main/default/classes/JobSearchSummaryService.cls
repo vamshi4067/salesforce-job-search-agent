@@ -20,7 +20,7 @@ global with sharing class JobSearchSummaryService {
             return;
         }
         List<JobItem> jobs = requestBody.jobs == null ? new List<JobItem>() : requestBody.jobs;
-        String html = '<h2>Salesforce job search summary</h2><p>' + jobs.size() + ' verified matches were added or refreshed.</p><ol>';
+        String html = '<h2>Today’s Salesforce job matches</h2><p>' + jobs.size() + ' new verified jobs were posted today.</p><ol>';
         for (JobItem item : jobs) {
             html += '<li><strong>' + esc(item.title) + '</strong> at ' + esc(item.company) +
                 ' — score ' + String.valueOf(item.score) + '/100 — <a href="' + esc(item.url) + '">view posting</a></li>';
@@ -28,7 +28,7 @@ global with sharing class JobSearchSummaryService {
         html += '</ol><p>Open the Job Search Tracker in Salesforce to review details and attached resumes.</p>';
         Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
         message.setToAddresses(new List<String>{ requestBody.email });
-        message.setSubject('Salesforce job matches: ' + jobs.size() + ' verified roles');
+        message.setSubject('Today’s Salesforce job matches: ' + jobs.size() + ' roles posted today');
         message.setHtmlBody(html);
         Messaging.SendEmailResult[] results = Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ message });
         Boolean sent = !results.isEmpty() && results[0].isSuccess();

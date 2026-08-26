@@ -1,13 +1,18 @@
 const API_URL = 'https://api.tavily.com/search';
 
 async function search(config, query) {
+  const startDate = new Date(Date.now() - config.postedWithinDays * 86400000).toISOString().slice(0, 10);
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: { Authorization: `Bearer ${config.tavilyKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      query, topic: 'general', search_depth: 'basic', max_results: 10,
+      query, topic: 'general', search_depth: 'basic', max_results: 10, start_date: startDate,
       include_answer: false, include_raw_content: false,
-      exclude_domains: ['linkedin.com', 'indeed.com', 'glassdoor.com']
+      exclude_domains: [
+        'linkedin.com', 'indeed.com', 'glassdoor.com', 'arc.dev', 'builtin.com',
+        'builtinnyc.com', 'ziprecruiter.com', 'dice.com', 'monster.com',
+        'careerbuilder.com', 'simplyhired.com', 'talent.com'
+      ]
     })
   });
   if (!response.ok) throw new Error(`Tavily search failed (${response.status}): ${await response.text()}`);
@@ -18,9 +23,9 @@ async function search(config, query) {
 export async function searchJobs(config) {
   const year = new Date().getUTCFullYear();
   const queries = [
-    `Salesforce Administrator OR Senior Salesforce Administrator remote United States jobs ${year}`,
-    `Salesforce Developer OR Senior Salesforce Developer remote United States jobs ${year}`,
-    `Salesforce Administrator Developer jobs Washington DC DMV Northern Virginia Maryland Atlanta Georgia ${year}`
+    `direct employer careers Salesforce Administrator remote United States apply ${year}`,
+    `direct employer careers Salesforce Developer remote United States apply ${year}`,
+    `direct employer Salesforce Administrator Developer careers Washington DC Northern Virginia Maryland Atlanta Georgia apply ${year}`
   ];
   return (await Promise.all(queries.map((query) => search(config, query)))).flat();
 }

@@ -1,6 +1,6 @@
 # Salesforce Job Search Agent
 
-Nightly cloud automation for Salesforce Admin/Developer job searches. Tavily finds current postings, Gemini Flash evaluates them, GitHub Actions runs the process, and Salesforce remains the system of record.
+Nightly cloud automation for Salesforce Admin/Developer job searches. Tavily finds current postings, NVIDIA NIM evaluates them, GitHub Actions runs discovery, and Salesforce manages the saved jobs and their ongoing lifecycle.
 
 ## What it does
 
@@ -18,11 +18,13 @@ Nightly cloud automation for Salesforce Admin/Developer job searches. Tavily fin
 ```mermaid
 flowchart TD
   GH["GitHub Actions nightly"] --> T["Tavily job search"]
-  T --> G["Gemini Flash normalization + scoring"]
+  T --> G["NVIDIA NIM normalization + scoring"]
   G --> V["URL and location verification"]
   V --> SF["Salesforce Job Tracker"]
   SF --> F["Salesforce Files"]
   SF --> E["Morning email"]
+  SF --> B["Scheduled Batch Apex reverification"]
+  B --> SF
 ```
 
 ## Prerequisites
@@ -30,7 +32,7 @@ flowchart TD
 - A Salesforce org with My Domain enabled.
 - Salesforce CLI (`sf`) for the one-time metadata deployment.
 - A private GitHub repository.
-- A Google AI Studio Gemini API key and a Tavily API key.
+- An NVIDIA NIM API key and a Tavily API key.
 - Your factual master resume in PDF and text format.
 
 ## 1. Deploy Salesforce metadata
@@ -42,6 +44,18 @@ sf org assign permset --name Job_Search_Agent_Admin --target-org JobSearchOrg
 ```
 
 Open App Launcher → **Job Search Tracker** after deployment.
+
+### Schedule Salesforce reverification
+
+After deployment, open **Setup → Developer Console → Debug → Open Execute Anonymous Window** and run:
+
+```apex
+JobPostingReverificationScheduler.scheduleDaily(7);
+```
+
+This schedules Salesforce to recheck saved open postings every day at 7:00 AM in the org's configured time zone. Confirm it under **Setup → Scheduled Jobs**. Run this statement only once; running it again creates another scheduled job.
+
+The batch processes 20 records per transaction. Confirmed `404`, `410`, or explicit closed-posting pages set `Verified Open` to false. Records in `Discovered` or `Reviewing` also move to `Closed`. Applied and Interviewing records retain their status. Ambiguous responses such as `403` remain unchanged.
 
 ## 2. Create Salesforce server-to-server authentication
 
@@ -72,7 +86,7 @@ Repository → Settings → Secrets and variables → Actions.
 
 Secrets:
 
-- `GEMINI_API_KEY`
+- `NVIDIA_API_KEY`
 - `TAVILY_API_KEY`
 - `SF_CLIENT_ID`
 - `SF_CLIENT_SECRET`
@@ -80,8 +94,11 @@ Secrets:
 Variables:
 
 - `SF_LOGIN_URL` — normally `https://your-domain.my.salesforce.com`
-- `GEMINI_MODEL` — use `gemini-3.6-flash`
+- `NVIDIA_MODEL` — use `nvidia/nemotron-3.5-lightning-30b-a3b`
 - `SUMMARY_EMAIL` — fallback email if Salesforce setting is blank
+- `MINIMUM_SCORE` — default `70`
+- `MAXIMUM_JOBS` — default `10`
+- `POSTED_WITHIN_DAYS` — default `3`; postings without a verifiable date are rejected
 
 The workflow runs at 5:30 AM America/New_York on weekdays and can also be started manually. Change the schedule in `.github/workflows/nightly-job-search.yml` if desired.
 
@@ -92,10 +109,15 @@ Run the workflow manually with `dry_run=true`. It searches, verifies, and scores
 ## Security and operating notes
 
 - Keep the repository private because it contains your resumes.
-- Gemini receives a text version of the resume with common email and phone patterns removed. Tavily never receives the resume.
-- The free tiers have quotas and rate limits. This workflow uses three basic Tavily searches per run and limits Gemini output sizes.
+- NVIDIA NIM receives a text version of the resume with common email and phone patterns removed. Tavily never receives the resume.
+- The free trial endpoints have quotas and rate limits. This workflow uses three basic Tavily searches per run and limits model output sizes.
 - Use an API-only integration user with only the supplied permission set.
 - URLs are canonicalized and hashed, preventing duplicates across runs.
+- Existing application statuses are preserved during nightly refreshes, and resume files are not attached twice.
+- General job collections and aggregator pages are rejected; only individual employer or ATS postings are eligible.
+- Only active postings dated within the configured three-day window are eligible.
+- Salesforce stores verified active jobs posted within the last three days.
+- Morning summaries contain only newly created records whose posting date is today; older and refreshed records are not repeated.
 - AI output is treated as untrusted input and validated before Salesforce writes.
 - The URL check is best-effort. Some job sites block automated requests; those results are rejected unless the page can be verified.
 - Job-board terms vary. This implementation uses web search results and employer/ATS pages; it does not log into or scrape LinkedIn.
@@ -105,6 +127,6 @@ Run the workflow manually with `dry_run=true`. It searches, verifies, and scores
 ```bash
 npm install
 npm test
-GEMINI_API_KEY=... TAVILY_API_KEY=... SF_CLIENT_ID=... SF_CLIENT_SECRET=... \
+NVIDIA_API_KEY=... TAVILY_API_KEY=... SF_CLIENT_ID=... SF_CLIENT_SECRET=... \
 SF_LOGIN_URL=https://your-domain.my.salesforce.com npm run dry-run
 ```

@@ -31,13 +31,14 @@ jobs:
       - name: Run job search
         run: npm start
         env:
-          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          NVIDIA_MODEL: ${{ vars.NVIDIA_MODEL }}
           SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
           SF_CLIENT_SECRET: ${{ secrets.SF_CLIENT_SECRET }}
           SF_LOGIN_URL: ${{ vars.SF_LOGIN_URL }}
           SUMMARY_EMAIL: ${{ vars.SUMMARY_EMAIL }}
           MINIMUM_SCORE: ${{ vars.MINIMUM_SCORE }}
           MAXIMUM_JOBS: ${{ vars.MAXIMUM_JOBS }}
-          BYPASS_JOB_FILTERS: ${{ vars.BYPASS_JOB_FILTERS }}
+          POSTED_WITHIN_DAYS: ${{ vars.POSTED_WITHIN_DAYS }}
           DRY_RUN: ${{ inputs.dry_run || 'false' }}

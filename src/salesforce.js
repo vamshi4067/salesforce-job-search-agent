@@ -19,16 +19,27 @@ async function sfFetch(auth, path, options = {}) {
   return response.status === 204 ? null : response.json();
 }
 
+function escapeSoql(value) {
+  return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+async function hasLinkedFile(auth, recordId, title) {
+  const query = encodeURIComponent(`SELECT Id FROM ContentDocumentLink WHERE LinkedEntityId='${escapeSoql(recordId)}' AND ContentDocument.Title='${escapeSoql(title)}' LIMIT 1`);
+  const found = await sfFetch(auth, `/services/data/v65.0/query?q=${query}`);
+  return found.totalSize > 0;
+}
+
 export async function upsertJob(auth, job) {
   const id = encodeURIComponent(job.externalId);
-  const result = await sfFetch(auth, `/services/data/v65.0/sobjects/Job_Application__c/Posting_Key__c/${id}`, { method: 'PATCH', body: JSON.stringify(job.fields) });
-  if (result?.id) return result.id;
   const query = encodeURIComponent(`SELECT Id FROM Job_Application__c WHERE Posting_Key__c='${job.externalId}' LIMIT 1`);
   const found = await sfFetch(auth, `/services/data/v65.0/query?q=${query}`);
-  return found.records[0].Id;
+  const existingId = found.records[0]?.Id;
+  const result = await sfFetch(auth, `/services/data/v65.0/sobjects/Job_Application__c/Posting_Key__c/${id}`, { method: 'PATCH', body: JSON.stringify(job.fields) });
+  return { id: result?.id || existingId, created: !existingId };
 }
 
 export async function attachFile(auth, recordId, filePath, title) {
+  if (await hasLinkedFile(auth, recordId, title)) return null;
   const bytes = await readFile(filePath);
   return sfFetch(auth, '/services/data/v65.0/sobjects/ContentVersion', {
     method: 'POST',
@@ -37,6 +48,7 @@ export async function attachFile(auth, recordId, filePath, title) {
 }
 
 export async function attachText(auth, recordId, content, title) {
+  if (await hasLinkedFile(auth, recordId, title)) return null;
   return sfFetch(auth, '/services/data/v65.0/sobjects/ContentVersion', {
     method: 'POST',
     body: JSON.stringify({ Title: title, PathOnClient: `${title}.md`, VersionData: Buffer.from(content).toString('base64'), FirstPublishLocationId: recordId })
