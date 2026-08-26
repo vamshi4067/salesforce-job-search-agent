@@ -12,6 +12,7 @@ export function loadConfig(env = process.env) {
     sfLoginUrl: env.SF_LOGIN_URL?.replace(/\/$/, ''),
     summaryEmail: env.SUMMARY_EMAIL || '',
     dryRun: env.DRY_RUN === 'true',
+    bypassJobFilters: env.BYPASS_JOB_FILTERS === 'true',
     minimumScore: Number(env.MINIMUM_SCORE || 70),
     maximumJobs: Number(env.MAXIMUM_JOBS || 10)
   };
