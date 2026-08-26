@@ -66,8 +66,12 @@ async function main() {
   }
   console.log(`Verified postings: ${verified.length}`);
   if (Object.keys(rejected).length) console.log(`Rejected postings: ${JSON.stringify(rejected)}`);
+  const uniqueVerified = [...new Map(verified.map((job) => [externalId(job.url), job])).values()];
+  if (uniqueVerified.length !== verified.length) {
+    console.log(`Duplicate posting URLs removed: ${verified.length - uniqueVerified.length}`);
+  }
   const ranked = [];
-  for (const job of verified) {
+  for (const job of uniqueVerified) {
     const initialKind = /developer|apex|lwc/i.test(`${job.title} ${job.description}`) ? 'Developer' : 'Admin';
     const evaluation = diagnosticBypass
       ? {
@@ -96,7 +100,7 @@ async function main() {
       fields: {
         Name: `${job.title} - ${job.company}`.slice(0, 80), Company__c: job.company, Job_Title__c: job.title,
         Location__c: job.location, Remote_Type__c: job.remoteType, Posting_URL__c: job.url,
-        Posting_Key__c: externalId(job.url), Source__c: job.source, Posted_Date__c: isoDateOrNull(job.postedDate),
+        Source__c: job.source, Posted_Date__c: isoDateOrNull(job.postedDate),
         Salary__c: job.salary || '', Description__c: (job.description || '').slice(0, 32000),
         Match_Score__c: job.evaluation.score, Match_Summary__c: job.evaluation.summary,
         Matched_Skills__c: job.evaluation.matchedSkills.join('; '), Missing_Skills__c: job.evaluation.missingSkills.join('; '),
